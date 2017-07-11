@@ -1,0 +1,8 @@
+.Piece {
+    position: relative;
+    text-align: center;
+}
+
+.Piece img {
+    width: 100%;
+}

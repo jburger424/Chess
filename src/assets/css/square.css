@@ -1,0 +1,14 @@
+.Square {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+}
+.Square.w{
+    background-color: #e4e4e4;
+}
+.Square.b{
+    background-color: #58370e;
+}
+.Square{
+    overflow: hidden;
+}
