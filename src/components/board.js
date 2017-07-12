@@ -44,14 +44,85 @@ class Board extends Component {
       }
     }
   }
+  //TODO pieces cannot travel through other pieces
+  isLegalMove(piece, oldLoc, newLoc){
+
+    piece = piece.split('-');
+    const color = piece[1];
+    piece = piece[0];
+    let pieceNewLoc = this.state.pieces[newLoc.x+","+newLoc.y];
+    let potentialKill = false;
+    if(pieceNewLoc !== undefined){
+      pieceNewLoc = pieceNewLoc.split('-');
+      if(pieceNewLoc[1] === color){
+        return false;
+      }
+      else{
+        potentialKill = true;
+      }
+    }
+
+    let diffX = newLoc.x - oldLoc.x;
+    let diffY = newLoc.y - oldLoc.y;
+
+    if(diffX === 0 && diffY === 0){
+      console.log("same location");
+      return false;
+    }
+    console.log("diffX: "+diffX+" diffY: "+diffY);
+    switch (piece){
+      case 'p':
+        if(color === 'b'){
+          diffY = -1*diffY;
+        }
+        if(diffY === 1 && Math.abs(diffX) <= 1){
+          if(!potentialKill && diffX !== 0){
+            return false;
+          }
+          else if(potentialKill && diffX===0){
+            return false;
+          }
+          return true;
+        }
+        //how can this be simplified as WebStorm suggests?
+        else if(((color === 'b' && oldLoc.y===6) ||
+          (color === 'w' && oldLoc.y===1))&&
+          diffY===2 && diffX===0){
+          return true;
+        }
+        else{
+          return false;
+        }
+      case 'b':
+        return (Math.abs(diffX) === Math.abs(diffY));
+      case 'q':
+        //TODO not always true, only straight and diagnol
+        return(Math.abs(diffX) === Math.abs(diffY) ||
+            Math.abs(diffX) === 0 ||
+            Math.abs(diffY) === 0
+        );
+      case 'k':
+        return (Math.abs(diffX) <= 1 &&  Math.abs(diffY)<= 1);
+      case 'r':
+        return (diffX === 0 || diffY === 0);
+      case 'n':
+        return ((Math.abs(diffY)===2 && Math.abs(diffX)===1) ||
+                (Math.abs(diffY)===1 && Math.abs(diffX)===2));
+
+
+
+    }
+  }
 
   movePiece(oldLoc, newLoc){
     let pieces = this.state.pieces;
     const piece = pieces[oldLoc.x+","+oldLoc.y];
-    delete pieces[oldLoc.x+","+oldLoc.y];
-    pieces[newLoc.x+","+newLoc.y] = piece;
-    this.setState({pieces: pieces});
-    this.setState({active: null});
+    if(this.isLegalMove(piece,oldLoc,newLoc)){
+      delete pieces[oldLoc.x+","+oldLoc.y];
+      pieces[newLoc.x+","+newLoc.y] = piece;
+      this.setState({pieces: pieces});
+      this.setState({active: null});
+    }
   }
 
   handleSquareClick(x,y) {

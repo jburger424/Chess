@@ -12,7 +12,6 @@ class Piece extends Component {
             return;
         }
         const imagePath = require('../assets/img/'+this.props.type+'-'+this.props.color+'.png');
-        console.log(imagePath);
         return(
             <img className="piece" src={imagePath}/>
         );
