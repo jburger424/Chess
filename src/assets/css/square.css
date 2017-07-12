@@ -4,10 +4,16 @@
     height: 50px;
 }
 .Square.w{
-    background-color: #e4e4e4;
+    background-color: #b9b9b9;
 }
 .Square.b{
     background-color: #58370e;
+}
+.Square.w.active{
+    background-color: #ffffff;
+}
+.Square.b.active{
+    background-color: #9f641a;
 }
 .Square{
     overflow: hidden;

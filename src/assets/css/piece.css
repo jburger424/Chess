@@ -6,3 +6,10 @@
 .Piece img {
     width: 100%;
 }
+
+.Board.turn-b .Piece.w{
+     opacity: .7;
+ }
+.Board.turn-w .Piece.b{
+    opacity: .7;
+}

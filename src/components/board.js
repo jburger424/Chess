@@ -8,6 +8,8 @@ class Board extends Component {
     super(props);
     this.state = {
       active: null,
+      turn: 'b',
+      winner: null,
       pieces: {
         '0,0': 'r-w',
         '1,0': 'n-w',
@@ -117,16 +119,23 @@ class Board extends Component {
   movePiece(oldLoc, newLoc){
     let pieces = this.state.pieces;
     const piece = pieces[oldLoc.x+","+oldLoc.y];
+    const newLocPiece = pieces[newLoc.x+","+newLoc.y];
     if(this.isLegalMove(piece,oldLoc,newLoc)){
+      if(newLocPiece!==undefined && newLocPiece.split('-')[0] === 'k'){
+        this.setState({winner: this.state.turn});
+      }
       delete pieces[oldLoc.x+","+oldLoc.y];
       pieces[newLoc.x+","+newLoc.y] = piece;
       this.setState({pieces: pieces});
       this.setState({active: null});
+      this.setState({turn: this.state.turn==='b'?'w':'b'});
     }
   }
 
   handleSquareClick(x,y) {
-    if(this.state.active === null && this.state.pieces[x+","+y] !== undefined){
+    let piece = this.state.pieces[x+","+y];
+    const color = piece !== undefined?piece.split('-')[1]:"";
+    if(piece !== undefined && color == this.state.turn){
       this.setState({active:{x:x, y:y}});
     }
     else if(this.state.active !== null){
@@ -154,8 +163,13 @@ class Board extends Component {
         else{
           piece = null;
         }
+        let className = "";
+        if(this.state.active !== null){
+          className = this.state.active.x === x && this.state.active.y === y?"active":"";
+        }
         tempRow.push(
           <Square
+            className={className}
             onClick={() => {
               this.handleSquareClick(x,y)
             }}
@@ -173,9 +187,16 @@ class Board extends Component {
   }
 
   render() {
+    let footerText = <div className="turn">
+                        Turn: {this.state.turn.toUpperCase()}
+                     </div>
+    if(this.state.winner !== null){
+      footerText = <h2>{this.state.winner.toUpperCase()} Wins!!!!!</h2>
+    }
     return (
-      <div className='Board'>
+      <div className={'Board turn-'+this.state.turn}>
         {this.genBoard()}
+        {footerText}
       </div>
     );
   }

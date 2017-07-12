@@ -14,7 +14,7 @@ class Square extends Component {
     }
     render() {
         return(
-            <div className={'Square '+this.props.color} onClick={()=>{this.props.onClick()}}>
+            <div className={'Square '+this.props.color+" "+this.props.className} onClick={()=>{this.props.onClick()}}>
                 {this.props.piece}
             </div>
         );

@@ -24,7 +24,7 @@ class Piece extends Component {
             return null;
         }
         return(
-            <div className={'Piece'}>
+            <div className={'Piece '+this.props.color}>
                 {this.icon()}
             </div>
         );
