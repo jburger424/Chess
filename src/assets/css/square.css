@@ -7,14 +7,17 @@
     background-color: #b9b9b9;
 }
 .Square.b{
-    background-color: #58370e;
+    background-color: rgba(127, 79, 20, 0.83);
 }
 .Square.w.active{
-    background-color: #ffffff;
+    background-color: #4f95ff;;
 }
 .Square.b.active{
-    background-color: #9f641a;
+    background-color: #4f95ff;;
 }
 .Square{
     overflow: hidden;
+}
+.Board.has-active-square .Square {
+    cursor: cell;
 }

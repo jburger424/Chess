@@ -1,15 +1,36 @@
-.Piece {
+.Board.turn-b  .Piece{
+    transition: transform .5s;
     position: relative;
     text-align: center;
+    /*transform: rotate(0deg) !Important;*/
+}
+.Board.turn-w  .Piece{
+    transition: transform .5s;
+    position: relative;
+    text-align: center;
+    /*transform: rotate(180deg) !Important;*/
 }
 
 .Piece img {
+    padding-top:4px;
     width: 100%;
 }
 
 .Board.turn-b .Piece.w{
-     opacity: .7;
- }
+    opacity: .6;
+}
 .Board.turn-w .Piece.b{
-    opacity: .7;
+     opacity: .6;
+ }
+.Board.turn-w .Square.b .Piece.b{
+    opacity: .5;
+}
+.Board.has-active-square.turn-b .Piece.b{
+    cursor: default;
+}
+.Board.turn-w .Piece.w:hover, .Board.turn-b .Piece.b:hover{
+     cursor: cell
+ }
+.Board.turn-w.has-active-square .Piece.w:hover, .Board.turn-b.has-active-square .Piece.b:hover{
+    cursor: pointer;
 }

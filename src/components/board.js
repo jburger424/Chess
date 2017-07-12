@@ -8,7 +8,7 @@ class Board extends Component {
     super(props);
     this.state = {
       active: null,
-      turn: 'b',
+      turn: 'w',
       winner: null,
       pieces: {
         '0,0': 'r-w',
@@ -46,7 +46,79 @@ class Board extends Component {
       }
     }
   }
-  //TODO pieces cannot travel through other pieces
+  squareContainsPiece(loc){
+    const piece = this.state.pieces[loc.x+','+loc.y];
+    return piece !== undefined;
+  }
+  doesCollide(oldLoc, newLoc){
+    //up down
+    if(oldLoc.x === newLoc.x && oldLoc.y !== newLoc.y){
+      console.log("up down");
+      let oldY = oldLoc.y;
+      let newY = newLoc.y;
+      //assuming newLoc is above oldLoc, will change if otherwise
+      if(newY < oldY){
+        const tempLoc = newY;
+        newY = oldY;
+        oldY = tempLoc;
+      }
+      console.log(oldY+"   "+newY);
+      for(let i=oldY+1; i<newY; i++){
+        console.log("y: "+i);
+        if(this.squareContainsPiece({x:oldLoc.x, y:i})){
+          console.log("does collide @ "+oldLoc.x+', '+i);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    //left right
+    //up down
+    if(oldLoc.x !== newLoc.x && oldLoc.y === newLoc.y){
+      console.log("left right");
+      let oldX = oldLoc.x;
+      let newX = newLoc.x;
+      //assuming newLoc is above oldLoc, will change if otherwise
+      if(newX < oldX){
+        const tempLoc = newX;
+        newX = oldX;
+        oldX = tempLoc;
+      }
+      console.log(oldX+"   "+newX);
+      for(let i=oldX+1; i<newX; i++){
+        console.log("X: "+i);
+        if(this.squareContainsPiece({x:i, y:oldLoc.y})){
+          console.log("does collide @ "+i+', '+oldLoc.x);
+          return true;
+        }
+      }
+      return false;
+    }
+    //TODO seems to be working, will resolve if any issues
+    //diag
+    if(oldLoc.x !== newLoc.x && oldLoc.y !== newLoc.y && (this.state.pieces[oldLoc.x+','+oldLoc.y].split('-')[0]) === 'q' || this.state.pieces[oldLoc.x+','+oldLoc.y].split('-')[0] === 'b');{
+      console.log("left right");
+      let oldX = oldLoc.x;
+      let newX = newLoc.x;
+      //assuming newLoc is above oldLoc, will change if otherwise
+      if(newX < oldX){
+        const tempLoc = newX;
+        newX = oldX;
+        oldX = tempLoc;
+      }
+      console.log(oldX+"   "+newX);
+      for(let i=oldX+1; i<newX; i++){
+        console.log("X: "+i);
+        if(this.squareContainsPiece({x:i, y:oldLoc.y})){
+          console.log("does collide @ "+i+', '+oldLoc.x);
+          return true;
+        }
+      }
+      return false;
+    }
+    return false;
+  }
   isLegalMove(piece, oldLoc, newLoc){
 
     piece = piece.split('-');
@@ -96,12 +168,12 @@ class Board extends Component {
           return false;
         }
       case 'b':
+        console.log(Math.abs(diffX)===Math.abs(diffY));
         return (Math.abs(diffX) === Math.abs(diffY));
       case 'q':
-        //TODO not always true, only straight and diagnol
         return(Math.abs(diffX) === Math.abs(diffY) ||
-            Math.abs(diffX) === 0 ||
-            Math.abs(diffY) === 0
+        (Math.abs(diffX) === 0 ||
+            Math.abs(diffY) === 0)
         );
       case 'k':
         return (Math.abs(diffX) <= 1 &&  Math.abs(diffY)<= 1);
@@ -120,10 +192,14 @@ class Board extends Component {
     let pieces = this.state.pieces;
     const piece = pieces[oldLoc.x+","+oldLoc.y];
     const newLocPiece = pieces[newLoc.x+","+newLoc.y];
-    if(this.isLegalMove(piece,oldLoc,newLoc)){
+    //unnecessary to send piece here
+    console.log('collides: '+this.doesCollide(oldLoc,newLoc));
+
+    if(this.isLegalMove(piece,oldLoc,newLoc) && !this.doesCollide(oldLoc,newLoc)){
       if(newLocPiece!==undefined && newLocPiece.split('-')[0] === 'k'){
         this.setState({winner: this.state.turn});
       }
+      console.log('make move');
       delete pieces[oldLoc.x+","+oldLoc.y];
       pieces[newLoc.x+","+newLoc.y] = piece;
       this.setState({pieces: pieces});
@@ -146,6 +222,7 @@ class Board extends Component {
   }
 
   genBoard() {
+    console.log("gen board");
     const gridSize = 8;
     let tempBoard = [];
     for (let y = 0; y < gridSize; y++) {
@@ -170,7 +247,7 @@ class Board extends Component {
         tempRow.push(
           <Square
             className={className}
-            onClick={() => {
+            onMouseDown={() => {
               this.handleSquareClick(x,y)
             }}
             x={x}
@@ -193,10 +270,16 @@ class Board extends Component {
     if(this.state.winner !== null){
       footerText = <h2>{this.state.winner.toUpperCase()} Wins!!!!!</h2>
     }
+    let hasActiveSquare = null;
+    if(this.state.active !== null){
+      hasActiveSquare="has-active-square";
+    }
     return (
-      <div className={'Board turn-'+this.state.turn}>
+      <div>
+      <div className={'Board turn-'+this.state.turn+" "+hasActiveSquare}>
         {this.genBoard()}
-        {footerText}
+      </div>
+    {footerText}
       </div>
     );
   }
